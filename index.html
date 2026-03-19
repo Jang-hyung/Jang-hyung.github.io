@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>옞누의 오늘 뭐 먹지?</title>
+<title>옞누의 세계</title>
 <link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;700;900&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -12,65 +12,102 @@
     --accent: #ff6b35;
     --accent2: #ffd23f;
     --accent3: #06d6a0;
+    --accent4: #ff6eb4;
     --text: #f0eee8;
     --muted: #6b6b80;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { height: -webkit-fill-available; }
 
   body {
     background: var(--bg);
     color: var(--text);
     font-family: 'Noto Sans KR', sans-serif;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    overflow-x: hidden;
-    overflow-y: auto;
+    height: 100vh;
+    height: -webkit-fill-available;
+    overflow: hidden;
     position: relative;
   }
 
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
 
   .blob {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.12;
+    position: fixed; border-radius: 50%;
+    filter: blur(80px); opacity: 0.12;
     animation: drift 12s ease-in-out infinite alternate;
-    z-index: 0;
-    pointer-events: none;
+    z-index: 0; pointer-events: none;
   }
-  .blob1 { width: 400px; height: 400px; background: var(--accent); top: -100px; left: -100px; }
-  .blob2 { width: 300px; height: 300px; background: var(--accent2); bottom: -80px; right: -80px; animation-delay: -6s; }
-  .blob3 { width: 250px; height: 250px; background: var(--accent3); top: 50%; left: 60%; animation-delay: -3s; }
-  @keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(30px,20px) scale(1.1); } }
+  .blob1 { width:400px;height:400px;background:var(--accent);top:-100px;left:-100px; }
+  .blob2 { width:300px;height:300px;background:var(--accent2);bottom:-80px;right:-80px;animation-delay:-6s; }
+  .blob3 { width:250px;height:250px;background:var(--accent3);top:50%;left:60%;animation-delay:-3s; }
+  .blob4 { width:350px;height:350px;background:var(--accent4);top:-80px;right:-80px;animation-delay:-4s;opacity:0;transition:opacity 0.6s; }
+  .blob4.show { opacity: 0.12; }
+  @keyframes drift { from{transform:translate(0,0) scale(1)} to{transform:translate(30px,20px) scale(1.1)} }
 
-  .container {
-    position: relative;
-    z-index: 1;
+  /* ── 슬라이더 ── */
+  .slider-outer {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .slider {
+    display: flex;
+    width: 200%;
+    height: 100%;
+    transition: transform 0.55s cubic-bezier(.77,0,.18,1);
+    will-change: transform;
+  }
+  .slider.on-page1 { transform: translateX(0); }
+  .slider.on-page2 { transform: translateX(-50%); }
+
+  .page {
+    width: 50%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
-    width: 100%;
+    justify-content: center;
+    gap: 22px;
+    position: relative;
+    z-index: 1;
     padding: 28px 24px;
     padding-top: max(28px, env(safe-area-inset-top));
-    padding-bottom: max(28px, env(safe-area-inset-bottom));
+    padding-bottom: max(72px, calc(env(safe-area-inset-bottom) + 56px));
   }
 
+  /* ── 네비 ── */
+  .nav-btn {
+    position: fixed;
+    bottom: max(20px, env(safe-area-inset-bottom));
+    z-index: 200;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--muted);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    padding: 9px 20px;
+    border-radius: 100px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .nav-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+  #navToNungi { right: 24px; }
+  #navToFood  { left: 24px; }
+
+  /* ── 공통 타이포 ── */
   h1 {
     font-family: 'Hahmlet', serif;
     font-size: clamp(1.7rem, 5vw, 3rem);
@@ -79,8 +116,8 @@
     text-align: center;
     line-height: 1.1;
   }
-  h1 span { color: var(--accent); }
-
+  h1 span.c1 { color: var(--accent); }
+  h1 span.c2 { color: var(--accent4); }
   .subtitle {
     color: var(--muted);
     font-size: 0.85rem;
@@ -88,145 +125,153 @@
     text-transform: uppercase;
   }
 
+  /* ══ PAGE 1 — 룰렛 ══ */
   .roulette-wrap {
     position: relative;
     width: min(300px, 80vw);
     height: min(300px, 80vw);
     flex-shrink: 0;
   }
-
   .pointer {
-    position: absolute;
-    top: -18px;
-    left: 50%;
+    position: absolute; top: -18px; left: 50%;
     transform: translateX(-50%);
-    width: 0; height: 0;
-    border-left: 14px solid transparent;
-    border-right: 14px solid transparent;
-    border-top: 28px solid var(--accent);
-    filter: drop-shadow(0 0 8px var(--accent));
-    z-index: 10;
-    transition: opacity 0.3s;
+    width:0; height:0;
+    border-left:14px solid transparent;
+    border-right:14px solid transparent;
+    border-top:28px solid var(--accent);
+    filter:drop-shadow(0 0 8px var(--accent));
+    z-index:10; transition:opacity 0.3s;
   }
-
   canvas#wheel {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    box-shadow:
-      0 0 0 6px #1e1e2a,
-      0 0 0 10px #2a2a3a,
-      0 20px 60px rgba(0,0,0,0.6);
+    width:100%; height:100%; border-radius:50%;
+    box-shadow:0 0 0 6px #1e1e2a,0 0 0 10px #2a2a3a,0 20px 60px rgba(0,0,0,0.6);
   }
-
   .empty-msg {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 8px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-    border-radius: 50%;
+    position:absolute; inset:0; display:flex; align-items:center;
+    justify-content:center; flex-direction:column; gap:8px;
+    opacity:0; pointer-events:none; transition:opacity 0.3s; border-radius:50%;
   }
-  .empty-msg.show { opacity: 1; }
-  .empty-msg .empty-icon { font-size: 2.2rem; }
-  .empty-msg p { font-size: 0.75rem; color: var(--muted); text-align: center; line-height: 1.4; }
+  .empty-msg.show { opacity:1; }
+  .empty-msg .empty-icon { font-size:2.2rem; }
+  .empty-msg p { font-size:0.75rem; color:var(--muted); text-align:center; line-height:1.4; }
 
   .result-box {
-    min-height: 52px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
+    height: 64px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    flex-shrink: 0;
   }
   .result-label {
-    font-size: 0.72rem;
-    color: var(--muted);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    opacity: 0;
-    transition: opacity 0.3s;
+    font-size:0.72rem; color:var(--muted); letter-spacing:0.15em;
+    text-transform:uppercase; opacity:0; transition:opacity 0.3s;
   }
-  .result-label.show { opacity: 1; }
+  .result-label.show { opacity:1; }
   .result-text {
-    font-family: 'Hahmlet', serif;
-    font-size: clamp(1.4rem, 5vw, 2.2rem);
-    font-weight: 700;
-    color: var(--accent2);
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.4s cubic-bezier(.22,1,.36,1);
-    text-align: center;
+    font-family:'Hahmlet',serif;
+    font-size:clamp(1.4rem,5vw,2.2rem);
+    font-weight:700; color:var(--accent2);
+    opacity:0; transform:translateY(10px);
+    transition:all 0.4s cubic-bezier(.22,1,.36,1); text-align:center;
   }
-  .result-text.show { opacity: 1; transform: translateY(0); }
+  .result-text.show { opacity:1; transform:translateY(0); }
 
   .spin-btn {
-    background: var(--accent);
-    color: #fff;
-    font-family: 'Hahmlet', serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    border: none;
-    padding: 14px 46px;
-    border-radius: 100px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
-    box-shadow: 0 4px 24px rgba(255,107,53,0.4);
-    -webkit-tap-highlight-color: transparent;
+    background:var(--accent); color:#fff;
+    font-family:'Hahmlet',serif; font-size:1.05rem; font-weight:700;
+    letter-spacing:0.05em; border:none; padding:14px 46px;
+    border-radius:100px; cursor:pointer; position:relative; overflow:hidden;
+    transition:transform 0.15s,box-shadow 0.15s,opacity 0.2s;
+    box-shadow:0 4px 24px rgba(255,107,53,0.4);
+    -webkit-tap-highlight-color:transparent; flex-shrink:0;
   }
-  .spin-btn::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
-  }
-  .spin-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(255,107,53,0.5); }
-  .spin-btn:active:not(:disabled) { transform: translateY(0); }
-  .spin-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .spin-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);}
+  .spin-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,107,53,0.5);}
+  .spin-btn:active:not(:disabled){transform:translateY(0);}
+  .spin-btn:disabled{opacity:0.35;cursor:not-allowed;}
 
   .chips {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 7px;
-    max-width: 380px;
+    display:flex; flex-wrap:wrap; justify-content:center; gap:7px; max-width:380px;
   }
   .chip {
-    background: var(--surface);
-    border: 1px solid #2a2a3a;
-    border-radius: 100px;
-    padding: 6px 13px;
-    font-size: 0.76rem;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.2s;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
+    background:var(--surface); border:1px solid #2a2a3a; border-radius:100px;
+    padding:6px 13px; font-size:0.76rem; color:var(--muted);
+    cursor:pointer; transition:all 0.2s; user-select:none;
+    -webkit-tap-highlight-color:transparent;
   }
-  .chip.active.kor { color: #ff6b35; border-color: #ff6b35; background: rgba(255,107,53,0.08); }
-  .chip.active.chi { color: #ff4d6d; border-color: #ff4d6d; background: rgba(255,77,109,0.08); }
-  .chip.active.jpn { color: #06d6a0; border-color: #06d6a0; background: rgba(6,214,160,0.08); }
-  .chip.active.wst { color: #ffd23f; border-color: #ffd23f; background: rgba(255,210,63,0.08); }
-  .chip.active.etc { color: #c77dff; border-color: #c77dff; background: rgba(199,125,255,0.08); }
+  .chip.active.kor{color:#ff6b35;border-color:#ff6b35;background:rgba(255,107,53,0.08);}
+  .chip.active.chi{color:#ff4d6d;border-color:#ff4d6d;background:rgba(255,77,109,0.08);}
+  .chip.active.jpn{color:#06d6a0;border-color:#06d6a0;background:rgba(6,214,160,0.08);}
+  .chip.active.wst{color:#ffd23f;border-color:#ffd23f;background:rgba(255,210,63,0.08);}
+  .chip.active.etc{color:#c77dff;border-color:#c77dff;background:rgba(199,125,255,0.08);}
 
   @keyframes confettiFly {
-    0%   { transform: translate(0,0) rotate(0deg); opacity: 1; }
-    100% { transform: translate(var(--tx), var(--ty)) rotate(var(--tr)); opacity: 0; }
+    0%{transform:translate(0,0) rotate(0deg);opacity:1;}
+    100%{transform:translate(var(--tx),var(--ty)) rotate(var(--tr));opacity:0;}
   }
   .confetti-piece {
-    position: fixed;
-    width: 8px; height: 8px;
-    border-radius: 2px;
-    pointer-events: none;
-    z-index: 999;
-    animation: confettiFly 0.9s ease-out forwards;
+    position:fixed; width:8px; height:8px; border-radius:2px;
+    pointer-events:none; z-index:999;
+    animation:confettiFly 0.9s ease-out forwards;
+  }
+
+  /* ══ PAGE 2 — 눙이는 누구 ══ */
+  .nungi-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 24px 22px;
+    width: min(360px, 88vw);
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    backdrop-filter: blur(12px);
+  }
+
+  .nungi-row {
+    display: grid;
+    grid-template-columns: 68px 1fr;
+    align-items: baseline;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.35s cubic-bezier(.22,1,.36,1);
+  }
+  .nungi-row.show { opacity:1; transform:translateY(0); }
+
+  .nungi-label {
+    font-size: 0.66rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding-top: 3px;
+  }
+  .nungi-value {
+    font-family: 'Hahmlet', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.35;
+    word-break: keep-all;
+  }
+
+  .nungi-btn {
+    background: var(--accent4); color: #fff;
+    font-family: 'Hahmlet', serif; font-size:1.05rem; font-weight:700;
+    letter-spacing:0.05em; border:none; padding:14px 40px;
+    border-radius:100px; cursor:pointer; position:relative; overflow:hidden;
+    transition:transform 0.15s,box-shadow 0.15s;
+    box-shadow:0 4px 24px rgba(255,110,180,0.4);
+    -webkit-tap-highlight-color:transparent; flex-shrink:0;
+  }
+  .nungi-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);}
+  .nungi-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,110,180,0.5);}
+  .nungi-btn:active{transform:translateY(0);}
+
+  .nungi-hint {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: center;
+    height: 18px;
   }
 </style>
 </head>
@@ -235,241 +280,298 @@
 <div class="blob blob1"></div>
 <div class="blob blob2"></div>
 <div class="blob blob3"></div>
+<div class="blob blob4" id="blob4"></div>
 
-<div class="container">
-  <div style="text-align:center">
-    <p class="subtitle">옞누의</p>
-    <h1>오늘 <span>뭐 먹지?</span></h1>
-  </div>
+<div class="slider-outer">
+  <div class="slider on-page1" id="slider">
 
-  <div class="chips" id="chips">
-    <div class="chip kor active" data-cat="kor">🍚 한식</div>
-    <div class="chip chi active" data-cat="chi">🥢 중식</div>
-    <div class="chip jpn active" data-cat="jpn">🍣 일식</div>
-    <div class="chip wst active" data-cat="wst">🍝 양식</div>
-    <div class="chip etc active" data-cat="etc">🌍 기타</div>
-  </div>
+    <!-- PAGE 1 -->
+    <div class="page" id="page1">
+      <div style="text-align:center">
+        <p class="subtitle">옞누의</p>
+        <h1>오늘 <span class="c1">뭐 먹지?</span></h1>
+      </div>
 
-  <div class="roulette-wrap">
-    <div class="pointer" id="pointer"></div>
-    <canvas id="wheel"></canvas>
-    <div class="empty-msg" id="emptyMsg">
-      <div class="empty-icon">🍽️</div>
-      <p>카테고리를<br>선택해주세요</p>
+      <div class="chips" id="chips">
+        <div class="chip kor active" data-cat="kor">🍚 한식</div>
+        <div class="chip chi active" data-cat="chi">🥢 중식</div>
+        <div class="chip jpn active" data-cat="jpn">🍣 일식</div>
+        <div class="chip wst active" data-cat="wst">🍝 양식</div>
+        <div class="chip etc active" data-cat="etc">🌍 기타</div>
+      </div>
+
+      <div class="roulette-wrap">
+        <div class="pointer" id="pointer"></div>
+        <canvas id="wheel"></canvas>
+        <div class="empty-msg" id="emptyMsg">
+          <div class="empty-icon">🍽️</div>
+          <p>카테고리를<br>선택해주세요</p>
+        </div>
+      </div>
+
+      <div class="result-box">
+        <p class="result-label" id="resultLabel">오늘의 메뉴</p>
+        <p class="result-text" id="resultText"></p>
+      </div>
+
+      <button class="spin-btn" id="spinBtn" onclick="spin()">🎰 돌려!</button>
     </div>
-  </div>
 
-  <div class="result-box">
-    <p class="result-label" id="resultLabel">오늘의 메뉴</p>
-    <p class="result-text" id="resultText"></p>
-  </div>
+    <!-- PAGE 2 -->
+    <div class="page" id="page2">
+      <div style="text-align:center">
+        <p class="subtitle">눙이의</p>
+        <h1>넌 <span class="c2">누구니?</span></h1>
+      </div>
 
-  <button class="spin-btn" id="spinBtn" onclick="spin()">🎰 돌려!</button>
+      <div class="nungi-card" id="nungiCard">
+        <div class="nungi-row" id="nr0"><span class="nungi-label">나이</span><span class="nungi-value" id="nv0">—</span></div>
+        <div class="nungi-row" id="nr1"><span class="nungi-label">사는 곳</span><span class="nungi-value" id="nv1">—</span></div>
+        <div class="nungi-row" id="nr2"><span class="nungi-label">직업</span><span class="nungi-value" id="nv2">—</span></div>
+        <div class="nungi-row" id="nr3"><span class="nungi-label">현재 상태</span><span class="nungi-value" id="nv3">—</span></div>
+        <div class="nungi-row" id="nr4"><span class="nungi-label">좋아하는 것</span><span class="nungi-value" id="nv4">—</span></div>
+        <div class="nungi-row" id="nr5"><span class="nungi-label">현재 고민</span><span class="nungi-value" id="nv5">—</span></div>
+      </div>
+
+      <p class="nungi-hint" id="nungiHint">버튼을 눌러 눙이를 소환하세요</p>
+      <button class="nungi-btn" onclick="revealNungi()">🔮 눙이 소환</button>
+    </div>
+
+  </div>
 </div>
 
+<button class="nav-btn" id="navToNungi" onclick="goTo(2)">눙이는 누구? →</button>
+<button class="nav-btn" id="navToFood"  onclick="goTo(1)" style="display:none">← 뭐 먹지?</button>
+
 <script>
+/* ── 페이지 이동 ── */
+function goTo(n) {
+  document.getElementById('slider').className = 'slider on-page' + n;
+  document.getElementById('navToNungi').style.display = n === 1 ? 'flex' : 'none';
+  document.getElementById('navToFood').style.display  = n === 2 ? 'flex' : 'none';
+  document.getElementById('blob4').classList.toggle('show', n === 2);
+}
+
+/* ── 룰렛 데이터 ── */
 const MENUS = {
-  kor: ['된장찌개','삼겹살','볶음밥','김치찌개','칼국수','순두부찌개','갈비탕','냉면','삼계탕','제육볶음','떡볶이','국밥','닭도리탕','찜닭','모듬전','모듬회', '족발보쌈', '알탕', '부대찌개'],
+  kor: ['된장찌개','삼겹살','볶음밥','김치찌개','칼국수','순두부찌개','갈비탕','냉면','삼계탕','제육볶음','떡볶이','국밥','닭도리탕','찜닭','모듬전','모듬회','족발보쌈','부대찌개'],
   chi: ['짜장면','짬뽕','탕수육','마라탕','마파두부','깐풍기','볶음밥','딤섬','훠궈','꿔바로우','양꼬치','마라샹궈'],
-  jpn: ['스시','라멘','우동','돈카츠','꼬치','규동','나베','타꼬야키','오니기리','오코노미야끼','소바','야끼소바', '덮밥'],
-  wst: ['파스타','피자','스테이크','버거','리조또','샐러드','브런치','연어스테이크','토스트','치킨', '샌드위치'],
-  etc: ['반미','쌀국수','포케','팟타이','케밥','인도커리','나시고렝','분짜','월남쌈','커리','타코','미트파이','그냥 넌 굶어라'],
+  jpn: ['스시','라멘','우동','돈카츠','꼬치','규동','나베','타꼬야키','오니기리','오코노미야끼','소바'],
+  wst: ['파스타','피자','스테이크','버거','리조또','샐러드','브런치','토스트','치킨','샌드위치'],
+  etc: ['반미','쌀국수','포케','팟타이','케밥','도넛','나시고렝','분짜','월남쌈','커리','타코','미트파이','그냥 넌 굶어라'],
 };
-
 const COLORS = {
-  kor: ['#ff6b35','#ff8c5a','#ff5722','#e64a19','#ff7043','#f4511e'],
-  chi: ['#ff4d6d','#ff6b6b','#e53935','#c62828','#ef5350','#d32f2f'],
-  jpn: ['#06d6a0','#00bfa5','#1de9b6','#00e5ff','#26c6da','#00acc1'],
-  wst: ['#ffd23f','#ffca28','#ffc107','#ffb300','#ffa000','#ff8f00'],
-  etc: ['#c77dff','#b56bff','#9d4edd','#7b2fff','#a855f7','#8b5cf6'],
+  kor:['#ff6b35','#ff8c5a','#ff5722','#e64a19','#ff7043','#f4511e'],
+  chi:['#ff4d6d','#ff6b6b','#e53935','#c62828','#ef5350','#d32f2f'],
+  jpn:['#06d6a0','#00bfa5','#1de9b6','#00e5ff','#26c6da','#00acc1'],
+  wst:['#ffd23f','#ffca28','#ffc107','#ffb300','#ffa000','#ff8f00'],
+  etc:['#c77dff','#b56bff','#9d4edd','#7b2fff','#a855f7','#8b5cf6'],
 };
 
-let spinning = false;
-let currentAngle = 0;
-let activeCategories = ['kor','chi','jpn','wst','etc'];
-let segments = [];
+let spinning=false, currentAngle=0;
+let activeCategories=['kor','chi','jpn','wst','etc'];
+let segments=[];
+const canvas=document.getElementById('wheel');
+const ctx=canvas.getContext('2d');
+const pointerEl=document.getElementById('pointer');
+const emptyMsg=document.getElementById('emptyMsg');
+const spinBtn=document.getElementById('spinBtn');
 
-const canvas = document.getElementById('wheel');
-const ctx = canvas.getContext('2d');
-const pointerEl = document.getElementById('pointer');
-const emptyMsg = document.getElementById('emptyMsg');
-const spinBtn = document.getElementById('spinBtn');
-
-function buildSegments() {
-  segments = [];
-  activeCategories.forEach(cat => {
-    MENUS[cat].forEach((name, i) => {
-      segments.push({ name, color: COLORS[cat][i % COLORS[cat].length], cat });
-    });
+function buildSegments(){
+  segments=[];
+  activeCategories.forEach(cat=>{
+    MENUS[cat].forEach((name,i)=>segments.push({name,color:COLORS[cat][i%COLORS[cat].length],cat}));
   });
-  for (let i = segments.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [segments[i], segments[j]] = [segments[j], segments[i]];
+  for(let i=segments.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [segments[i],segments[j]]=[segments[j],segments[i]];
   }
 }
-
-function drawWheel(angle) {
-  const size = canvas.width;
-  const cx = size / 2, cy = size / 2, r = size / 2 - 4;
-  const n = segments.length;
-  ctx.clearRect(0, 0, size, size);
-
-  if (n === 0) {
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, 2 * Math.PI);
-    ctx.fillStyle = '#1a1a26';
-    ctx.fill();
-    ctx.strokeStyle = '#2a2a3a';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    emptyMsg.classList.add('show');
-    pointerEl.style.opacity = '0.2';
-    spinBtn.disabled = true;
-    return;
+function drawWheel(angle){
+  const sz=canvas.width,cx=sz/2,cy=sz/2,r=sz/2-4,n=segments.length;
+  ctx.clearRect(0,0,sz,sz);
+  if(!n){
+    ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);
+    ctx.fillStyle='#1a1a26';ctx.fill();
+    ctx.strokeStyle='#2a2a3a';ctx.lineWidth=2;ctx.stroke();
+    emptyMsg.classList.add('show');pointerEl.style.opacity='0.2';spinBtn.disabled=true;return;
   }
-
-  emptyMsg.classList.remove('show');
-  pointerEl.style.opacity = '1';
-  spinBtn.disabled = false;
-
-  const arc = (2 * Math.PI) / n;
-
-  segments.forEach((seg, i) => {
-    const start = angle + i * arc;
-    const end = start + arc;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.arc(cx, cy, r, start, end);
-    ctx.closePath();
-    ctx.fillStyle = seg.color;
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(start + arc / 2);
-    ctx.textAlign = 'right';
-    ctx.fillStyle = 'rgba(0,0,0,0.75)';
-    ctx.font = `bold ${Math.max(8, Math.min(13, 280/n))}px 'Noto Sans KR', sans-serif`;
-    ctx.fillText(seg.name, r - 10, 4);
-    ctx.restore();
+  emptyMsg.classList.remove('show');pointerEl.style.opacity='1';spinBtn.disabled=false;
+  const arc=(2*Math.PI)/n;
+  segments.forEach((seg,i)=>{
+    const s=angle+i*arc,e=s+arc;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,s,e);ctx.closePath();
+    ctx.fillStyle=seg.color;ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.25)';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(s+arc/2);ctx.textAlign='right';
+    ctx.fillStyle='rgba(0,0,0,0.75)';
+    ctx.font=`bold ${Math.max(8,Math.min(13,280/n))}px 'Noto Sans KR',sans-serif`;
+    ctx.fillText(seg.name,r-10,4);ctx.restore();
   });
-
-  ctx.beginPath();
-  ctx.arc(cx, cy, 22, 0, 2 * Math.PI);
-  ctx.fillStyle = '#0d0d14';
-  ctx.fill();
-  ctx.strokeStyle = '#2a2a3a';
-  ctx.lineWidth = 3;
-  ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,22,0,2*Math.PI);
+  ctx.fillStyle='#0d0d14';ctx.fill();ctx.strokeStyle='#2a2a3a';ctx.lineWidth=3;ctx.stroke();
 }
-
-function resize() {
-  const w = canvas.parentElement.offsetWidth;
-  canvas.width = w;
-  canvas.height = w;
-  drawWheel(currentAngle);
+function resize(){
+  const w=canvas.parentElement.offsetWidth;
+  canvas.width=w;canvas.height=w;drawWheel(currentAngle);
 }
-
-function getResult(angle) {
-  const n = segments.length;
-  if (n === 0) return null;
-  const arc = (2 * Math.PI) / n;
-  const pointer = -Math.PI / 2;
-  for (let i = 0; i < n; i++) {
-    let start = ((angle + i * arc) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-    let end   = ((angle + (i+1) * arc) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-    let p     = (pointer % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-    if (start <= end ? (p >= start && p < end) : (p >= start || p < end)) {
-      return segments[i];
-    }
+function getResult(angle){
+  const n=segments.length;if(!n)return null;
+  const arc=(2*Math.PI)/n,p=-Math.PI/2;
+  for(let i=0;i<n;i++){
+    const s=((angle+i*arc)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+    const e=((angle+(i+1)*arc)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+    const pp=(p%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+    if(s<=e?(pp>=s&&pp<e):(pp>=s||pp<e))return segments[i];
   }
   return segments[0];
 }
-
-function easeOut(t) { return 1 - Math.pow(1 - t, 4); }
-
-function spin() {
-  if (spinning || segments.length === 0) return;
-  spinning = true;
-  spinBtn.disabled = true;
-
+function easeOut(t){return 1-Math.pow(1-t,4);}
+function spin(){
+  if(spinning||!segments.length)return;
+  spinning=true;spinBtn.disabled=true;
   document.getElementById('resultLabel').classList.remove('show');
   document.getElementById('resultText').classList.remove('show');
-
-  const extraSpins = 6 + Math.random() * 4;
-  const targetAngle = currentAngle + extraSpins * 2 * Math.PI;
-  const duration = 3500;
-  const startTime = performance.now();
-  const startAngle = currentAngle;
-
-  function frame(now) {
-    const elapsed = now - startTime;
-    const t = Math.min(elapsed / duration, 1);
-    currentAngle = startAngle + (targetAngle - startAngle) * easeOut(t);
-    drawWheel(currentAngle);
-
-    if (t < 1) {
-      requestAnimationFrame(frame);
-    } else {
-      currentAngle = targetAngle % (2 * Math.PI);
-      drawWheel(currentAngle);
-      spinning = false;
-      if (segments.length > 0) spinBtn.disabled = false;
-
-      const result = getResult(currentAngle);
-      if (result) {
+  const extra=6+Math.random()*4,target=currentAngle+extra*2*Math.PI;
+  const dur=3500,t0=performance.now(),a0=currentAngle;
+  function frame(now){
+    const t=Math.min((now-t0)/dur,1);
+    currentAngle=a0+(target-a0)*easeOut(t);drawWheel(currentAngle);
+    if(t<1){requestAnimationFrame(frame);}
+    else{
+      currentAngle=target%(2*Math.PI);drawWheel(currentAngle);
+      spinning=false;if(segments.length)spinBtn.disabled=false;
+      const res=getResult(currentAngle);
+      if(res){
         document.getElementById('resultLabel').classList.add('show');
-        document.getElementById('resultText').textContent = result.name;
-        setTimeout(() => document.getElementById('resultText').classList.add('show'), 50);
+        document.getElementById('resultText').textContent=res.name;
+        setTimeout(()=>document.getElementById('resultText').classList.add('show'),50);
         burst();
       }
     }
   }
   requestAnimationFrame(frame);
 }
-
-function burst() {
-  const colors = ['#ff6b35','#ffd23f','#06d6a0','#ff4d6d','#c77dff','#fff'];
-  for (let i = 0; i < 40; i++) {
-    const el = document.createElement('div');
-    el.className = 'confetti-piece';
-    el.style.left = '50%';
-    el.style.top = '44%';
-    el.style.background = colors[Math.floor(Math.random() * colors.length)];
-    el.style.setProperty('--tx', ((Math.random() - 0.5) * 300) + 'px');
-    el.style.setProperty('--ty', ((Math.random() - 1.2) * 250) + 'px');
-    el.style.setProperty('--tr', (Math.random() * 720 - 360) + 'deg');
-    el.style.animationDelay = Math.random() * 0.3 + 's';
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 1200);
+function burst(){
+  const colors=['#ff6b35','#ffd23f','#06d6a0','#ff4d6d','#c77dff','#fff'];
+  for(let i=0;i<40;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.left='50%';el.style.top='44%';
+    el.style.background=colors[Math.floor(Math.random()*colors.length)];
+    el.style.setProperty('--tx',((Math.random()-0.5)*300)+'px');
+    el.style.setProperty('--ty',((Math.random()-1.2)*250)+'px');
+    el.style.setProperty('--tr',(Math.random()*720-360)+'deg');
+    el.style.animationDelay=Math.random()*0.3+'s';
+    document.body.appendChild(el);setTimeout(()=>el.remove(),1200);
   }
 }
-
-document.getElementById('chips').addEventListener('click', e => {
-  const chip = e.target.closest('.chip');
-  if (!chip || spinning) return;
-  const cat = chip.dataset.cat;
-
-  if (activeCategories.includes(cat)) {
-    activeCategories = activeCategories.filter(c => c !== cat);
-    chip.classList.remove('active');
-  } else {
-    activeCategories.push(cat);
-    chip.classList.add('active');
-  }
-
-  buildSegments();
-  drawWheel(currentAngle);
+document.getElementById('chips').addEventListener('click',e=>{
+  const chip=e.target.closest('.chip');if(!chip||spinning)return;
+  const cat=chip.dataset.cat;
+  if(activeCategories.includes(cat)){activeCategories=activeCategories.filter(c=>c!==cat);chip.classList.remove('active');}
+  else{activeCategories.push(cat);chip.classList.add('active');}
+  buildSegments();drawWheel(currentAngle);
   document.getElementById('resultText').classList.remove('show');
   document.getElementById('resultLabel').classList.remove('show');
 });
+buildSegments();window.addEventListener('resize',resize);resize();
 
-buildSegments();
-window.addEventListener('resize', resize);
-resize();
+/* ── 눙이 데이터 ── */
+const NUNGI = {
+  나이: [
+    '24살',
+    '28살',
+    '22살',
+    '31살',
+    '26살',
+    '29살',
+    '33살',
+    '21살',
+    '27살',
+    '25살',
+  ],
+  사는곳: [
+    '서울 마포구 어느 골목 세번째 빌라 302호',
+    '부산 광안리 해변에서 도보 47분 거리',
+    '오사카 난바 편의점 바로 옆 건물 5층',
+    '서울 2호선 홍대입구역 출구 나오면 보이는 카페 위 옥탑방',
+    '인천 송도 신도시 신축아파트',
+    '경기도 302번 버스 5번째 정류장 옆 단칸방',
+    '도쿄 시부야 뒷골목 올라가면 나오는 맨션',
+    '제주도 한달살이하며 4개월째 알바중인 삼겹살집 숙소',
+    '대구 동성로 떡볶이집 골목 맞은편 건물',
+    '서울 강남 공유오피스 소파',
+  ],
+  직업: [
+    '직장인. 살아는 있음',
+    '대학생. 전공은 일단 다님',
+    '프리랜서. 프리하지는 않음',
+    '취준생. 준비는 하고 있음',
+    '대학원생. 진짜같음',
+    '직장인. 직장상사를 증오함',
+    '자영업자. 오늘 손님 3명',
+    '무직. 충전 기간이라고 부르는 중',
+    '디자이너. 원색을 좋아함',
+    '일러스트레이터. 커미션 ai로 대신 그려내는 중',
+  ],
+  현재상태: [
+    '침대에 누워서 폰 보는 중인데 폰이 무거움',
+    '뭔가 먹고 싶은데 뭘 먹고 싶은지 모름',
+    '잠을 자야 하는데 눈이 안 감김',
+    '할 일 있는데 2시간째 유튜브 보는 중',
+    '아무것도 안 했는데 이유 없이 피곤함',
+    '샤워해야지 하고 두 시간 지남',
+    '장바구니에 옷이 너무 많은데 돈이 없음',
+    '2d 캐릭터가 자꾸 생각나고 보고 싶음',
+    '잠깐 쉬려고 누웠는데 2시간 지남',
+    '밖에 나가야 하는데 나가기 싫음',
+  ],
+  좋아하는것: [
+    '맛있는 거 먹고 누워서 배 문지르기',
+    '아무 계획 없는 주말',
+    '비 오는 날 집에 있기',
+    '마지마랑 히스토리 보기',
+    '일본드라마 한 시즌 몰아보기',
+    '아무 말 안 해도 편한 사람이랑 있기',
+    '퇴근하고 바로 집 가기',
+    '별거 없는데 괜찮은 하루',
+    '옥상까지 걸어 올라가기',
+    '늦잠 자고 브런치 먹기',
+  ],
+  현재고민: [
+    '왜 통장에 돈이 없지?',
+    '살이 찐 건가 옷이 줄어든 건가?',
+    '연락을 먼저 할까 말까?',
+    '집에 가고 싶다',
+    '야쿠자를 하려면 어떻게 해야 하지?',
+    '배 고픈데 자야됨',
+    '운동을 해야 되는데 내일부터 해야지',
+    '중국인이 자꾸 귀찮게 함',
+    '이걸 사? 말아?',
+    '유튜브 알고리즘이 나를 너무 잘 앎',
+  ],
+};
+
+const KEYS   = ['나이','사는곳','직업','현재상태','좋아하는것','현재고민'];
+const LABELS = ['나이','사는 곳','직업','현재 상태','좋아하는 것','현재 고민'];
+
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function revealNungi(){
+  for(let i=0;i<6;i++){
+    document.getElementById('nr'+i).classList.remove('show');
+    document.getElementById('nv'+i).textContent='—';
+  }
+  document.getElementById('nungiHint').textContent='';
+
+  KEYS.forEach((k,i)=>{
+    setTimeout(()=>{
+      document.getElementById('nv'+i).textContent = pick(NUNGI[k]);
+      document.getElementById('nr'+i).classList.add('show');
+      if(i===5) document.getElementById('nungiHint').textContent='돌릴 때마다 다른 눙이가 나옴';
+    }, i * 150);
+  });
+}
 </script>
 </body>
 </html>
